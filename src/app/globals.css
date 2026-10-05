@@ -1,0 +1,213 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ── Archive: paper, ink and one oxblood accent ─────────────────── */
+:root {
+  --paper: #efece5;
+  --sheet: #f7f5f0;
+  --ink: #1e1c19;
+  --ink-2: #4a453e;
+  --ink-3: #6b655b;
+  --rule: #d6d1c6;
+  --rule-strong: #bdb6a8;
+  --wash: rgba(30, 28, 25, 0.05);
+  --accent: #6e2a26;
+  --accent-ink: #f6f3ec;
+  --accent-soft: rgba(110, 42, 38, 0.1);
+  --st-established: #3f5a3a;
+  --st-interpretation: #2f4a6d;
+  --st-disputed: #7a5a1e;
+  --st-anecdote: #5a4b66;
+  --st-myth: #6e2a26;
+  color-scheme: light;
+}
+
+.dark {
+  --paper: #171614;
+  --sheet: #1f1d1a;
+  --ink: #ece7dd;
+  --ink-2: #bdb6a8;
+  --ink-3: #928b7e;
+  --rule: #34312b;
+  --rule-strong: #4a463e;
+  --wash: rgba(236, 231, 221, 0.06);
+  --accent: #c98b80;
+  --accent-ink: #1a1816;
+  --accent-soft: rgba(201, 139, 128, 0.14);
+  --st-established: #9fb994;
+  --st-interpretation: #9db3cf;
+  --st-disputed: #d4b57a;
+  --st-anecdote: #b9a8c9;
+  --st-myth: #d29a90;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-sheet: var(--sheet);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-wash: var(--wash);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, Menlo, Consolas, monospace;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+::selection {
+  background: var(--accent-soft);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Small monospace caption used for labels, metadata and section headings. */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── Article typography ────────────────────────────────────────── */
+.prose-idea {
+  font-size: 19px;
+  line-height: 1.68;
+  color: var(--ink);
+}
+.prose-idea > * + * {
+  margin-top: 1.05em;
+}
+.prose-idea h2 {
+  font-size: 1.5em;
+  line-height: 1.25;
+  font-weight: 500;
+  letter-spacing: -0.012em;
+  margin-top: 1.8em;
+}
+.prose-idea h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+  margin-top: 1.5em;
+}
+.prose-idea strong {
+  font-weight: 600;
+}
+.prose-idea a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.prose-idea ul,
+.prose-idea ol {
+  padding-left: 1.3em;
+}
+.prose-idea ul {
+  list-style: disc;
+}
+.prose-idea ol {
+  list-style: decimal;
+}
+.prose-idea li + li {
+  margin-top: 0.35em;
+}
+.prose-idea li::marker {
+  color: var(--ink-3);
+}
+.prose-idea blockquote {
+  font-style: italic;
+  font-size: 1.1em;
+  line-height: 1.5;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 0.9em 0;
+  color: var(--ink-2);
+}
+.prose-idea blockquote p + p {
+  margin-top: 0.6em;
+}
+.prose-idea code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: var(--wash);
+  padding: 0.1em 0.35em;
+}
+.prose-idea pre {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  line-height: 1.5;
+  border: 1px solid var(--ink);
+  padding: 1.1em 1.3em;
+  overflow-x: auto;
+  letter-spacing: 0.14em;
+}
+.prose-idea pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+.prose-idea table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88em;
+  display: block;
+  overflow-x: auto;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.prose-idea table thead,
+.prose-idea table tbody {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+.prose-idea th {
+  text-align: left;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.prose-idea th,
+.prose-idea td {
+  padding: 0.6em 0.8em 0.6em 0;
+  border-bottom: 1px solid var(--rule);
+}
+.prose-idea tr:last-child td {
+  border-bottom: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
