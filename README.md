@@ -87,7 +87,7 @@ Topics and modes are defined in `src/lib/content/taxonomy.ts`.
 
 ## Deploying (Vercel + Turso)
 
-The local `local.db` file can't be used on serverless hosting, so production uses [Turso](https://turso.tech), hosted libSQL/SQLite. The code already supports it: `DATABASE_URL` accepts a `libsql://` URL and `DATABASE_AUTH_TOKEN` a token.
+The local `local.db` file can't be used on serverless hosting, so production uses [Turso](https://turso.tech), hosted libSQL/SQLite. The code already supports it: set `DATABASE_URL` (a `libsql://` URL) and `DATABASE_AUTH_TOKEN`, or install the Turso integration from the Vercel Marketplace with the prefix `DATABASE`, which sets `DATABASE_TURSO_DATABASE_URL` and `DATABASE_TURSO_AUTH_TOKEN`. All of these names work; see `src/lib/db/credentials.ts`.
 
 1. **Create a Turso database** (dashboard → Create database) and an auth token.
 2. **Create the tables** in it:
