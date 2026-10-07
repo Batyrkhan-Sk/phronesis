@@ -89,6 +89,12 @@ Connections only need to be written in one file; they appear on both ideas. The 
 
 Topics and modes are defined in `src/lib/content/taxonomy.ts`.
 
+## Discussion leads
+
+`pnpm leads` reads recent public Mastodon posts for the hashtags of the least-covered topics and writes `leads/leads.md` (gitignored). The file starts with a **Terms spotted** list (named concepts, quoted words and phrases, related hashtags), followed by the most-engaged posts. Leads are inspiration, not evidence: every fact must still be verified before it becomes an idea.
+
+Options: `--topics law,music`, `--tags etymology,foodhistory`, `--instance mastodon.social`, `--per-tag 6`, `--pages 3`, `--thinnest 3`, `--out leads/leads.md`.
+
 ## Deploying (Vercel + Turso)
 
 The local `local.db` file can't be used on serverless hosting, so production uses [Turso](https://turso.tech), hosted libSQL/SQLite. The code already supports it: set `DATABASE_URL` (a `libsql://` URL) and `DATABASE_AUTH_TOKEN`, or install the Turso integration from the Vercel Marketplace with the prefix `DATABASE`, which sets `DATABASE_TURSO_DATABASE_URL` and `DATABASE_TURSO_AUTH_TOKEN`. All of these names work; see `src/lib/db/credentials.ts`.

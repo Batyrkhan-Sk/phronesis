@@ -43,3 +43,6 @@ next-env.d.ts
 # local database
 local.db*
 !.env.example
+
+# discussion leads (generated)
+/leads/
