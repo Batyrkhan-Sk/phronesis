@@ -4,6 +4,10 @@ Things worth knowing, things worth remembering, and things worth talking about.
 
 A knowledge-exploration app where the unit of content is an **idea**: a short, sourced, connected piece of knowledge that leads to other ideas.
 
+## Deploy
+
+https://phronesis-git-main-bshekish-2335s-projects.vercel.app/
+
 ## Running it
 
 ```bash
