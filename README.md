@@ -6,7 +6,7 @@ A knowledge-exploration app where the unit of content is an **idea**: a short, s
 
 ## Deploy
 
-https://phronesis-git-main-bshekish-2335s-projects.vercel.app/
+https://phronesis-three.vercel.app/
 
 ## Running it
 
