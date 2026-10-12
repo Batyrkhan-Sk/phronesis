@@ -106,7 +106,7 @@ export function SwipeDeck({ cards }: { cards: DeckCard[] }) {
         <span>
           {Math.min(index + 1, deck.length)} / {deck.length}
         </span>
-        <span>{kept > 0 ? `${kept} kept` : "Swipe right to keep"}</span>
+        {kept > 0 && <span>{kept} kept</span>}
       </div>
 
       <div className="relative mt-4 h-[min(560px,68dvh)]">

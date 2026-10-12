@@ -28,7 +28,6 @@ export default function DeckPage() {
       <header className="mx-auto mb-5 max-w-[460px]">
         <div className="label">The deck</div>
         <h1 className="mt-1 text-[32px] font-medium leading-tight tracking-[-0.02em]">One idea at a time</h1>
-        <p className="mt-1 text-[16px] italic text-ink-2">Swipe right to keep, left to skip, tap the card to read it.</p>
       </header>
       <SwipeDeck cards={cards} />
     </div>
