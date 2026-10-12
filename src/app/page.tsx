@@ -6,7 +6,7 @@ import { SwipeRow } from "@/components/swipe-row";
 import { TrailCard } from "@/components/trail-card";
 import { getAllIdeas, getAllTrails, getIdeaOfTheDay, getIdeasByMode, summarize } from "@/lib/content";
 import { MODES, TOPICS, topicBySlug } from "@/lib/content/taxonomy";
-import { catalogueNo, roman } from "@/lib/format";
+import { catalogueNo, quoted, roman } from "@/lib/format";
 
 // Re-render at most hourly so the idea of the day rolls over.
 export const revalidate = 3600;
@@ -127,7 +127,7 @@ export default function HomePage() {
       <SwipeRow>
         {starters.map((i) => (
           <Link key={i.slug} href={`/idea/${i.slug}`} className="group block">
-            <blockquote className="text-[22px] italic leading-[1.4] transition-colors group-hover:text-accent">“{i.conversationStarter}”</blockquote>
+            <blockquote className="text-[22px] italic leading-[1.4] transition-colors group-hover:text-accent">{quoted(i.conversationStarter!)}</blockquote>
             <div className="label mt-3 text-[11px]">From {catalogueNo(i.no)} · {i.title}</div>
           </Link>
         ))}

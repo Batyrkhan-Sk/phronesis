@@ -16,6 +16,9 @@ export function relativeDate(date: Date, now = new Date()) {
   return "just now";
 }
 
+/** Wraps text in quotation marks, turning quotes inside it into single ones: “‘Ye Olde Shoppe’ should…” */
+export const quoted = (text: string) => `“${text.replace(/“/g, "‘").replace(/”/g, "’")}”`;
+
 /** "No. 017" style catalogue number. */
 export const catalogueNo = (n: number) => `No. ${String(n).padStart(3, "0")}`;
 

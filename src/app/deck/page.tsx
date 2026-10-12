@@ -25,7 +25,7 @@ export default function DeckPage() {
 
   return (
     <div className="pt-6 sm:pt-12">
-      <header className="mx-auto mb-5 max-w-[460px]">
+      <header className="mx-auto mb-5 hidden max-w-[460px] sm:block">
         <div className="label">The deck</div>
         <h1 className="mt-1 text-[32px] font-medium leading-tight tracking-[-0.02em]">One idea at a time</h1>
       </header>

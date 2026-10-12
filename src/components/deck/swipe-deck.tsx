@@ -3,10 +3,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useMotionValue, useTransform, type PanInfo } from "motion/react";
 import { keepIdea } from "@/app/actions";
-import { catalogueNo } from "@/lib/format";
+import { catalogueNo, quoted } from "@/lib/format";
 
 export type DeckCard = {
   slug: string;
@@ -95,30 +95,52 @@ export function SwipeDeck({ cards }: { cards: DeckCard[] }) {
   }, [next, card, router]);
 
   useEffect(() => {
-    if (!notice || notice === "signed-out") return;
-    const t = setTimeout(() => setNotice(null), 1800);
+    if (!notice) return;
+    const t = setTimeout(() => setNotice(null), notice === "signed-out" ? 5000 : 1800);
     return () => clearTimeout(t);
   }, [notice]);
 
+  // On phones the deck covers the screen, so the page behind it must not scroll.
+  useEffect(() => {
+    const phone = window.matchMedia("(max-width: 639.98px)");
+    const apply = () => (document.documentElement.style.overflow = phone.matches ? "hidden" : "");
+    apply();
+    phone.addEventListener("change", apply);
+    return () => {
+      phone.removeEventListener("change", apply);
+      document.documentElement.style.overflow = "";
+    };
+  }, []);
+
   return (
-    <div className="mx-auto flex w-full max-w-[460px] flex-col">
-      <div className="label flex items-center justify-between text-[11px]">
+    // Phones: the card fills the whole screen, with nothing above or below it.
+    // Larger screens: a framed card with a counter and buttons, inside the normal page.
+    <div className="fixed inset-0 z-[60] flex flex-col bg-paper sm:static sm:z-auto sm:mx-auto sm:w-full sm:max-w-[460px]">
+      <div className="label hidden items-center justify-between text-[11px] sm:flex">
         <span>
           {Math.min(index + 1, deck.length)} / {deck.length}
         </span>
         {kept > 0 && <span>{kept} kept</span>}
       </div>
 
-      <div className="relative mt-4 h-[min(560px,68dvh)]">
-        {/* The next card peeks from underneath. */}
+      <div className="relative flex-1 sm:mt-4 sm:h-[min(560px,68dvh)] sm:flex-none">
+        {/* The next card waits underneath. */}
         {deck[index + 1] && !done && (
-          <div className="absolute inset-0 translate-y-2 scale-[0.97] border border-rule bg-sheet" aria-hidden />
+          <div className="absolute inset-0 bg-sheet sm:translate-y-2 sm:scale-[0.97] sm:border sm:border-rule" aria-hidden />
         )}
         <AnimatePresence custom={exit} initial={false}>
-          {!done && card && <SwipeCard key={card.slug} card={card} onSwipe={next} />}
+          {/* Wait for the shuffle, so the unshuffled first card doesn’t fly off as if swiped. */}
+          {order && !done && card && <SwipeCard key={card.slug} card={card} onSwipe={next} />}
         </AnimatePresence>
+        <Link
+          href="/"
+          aria-label="Close the deck"
+          className="absolute right-3 top-3 z-30 flex size-10 items-center justify-center bg-paper/85 text-[24px] leading-none text-ink sm:hidden"
+        >
+          ×
+        </Link>
         {done && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center border border-ink bg-sheet p-8 text-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-sheet p-8 text-center sm:border sm:border-ink">
             <div className="label">End of the deck</div>
             <p className="mt-3 text-[24px] leading-snug">You’ve seen all {deck.length} ideas.</p>
             <div className="mt-6 flex flex-wrap justify-center gap-3">
@@ -140,7 +162,7 @@ export function SwipeDeck({ cards }: { cards: DeckCard[] }) {
         )}
       </div>
 
-      <div className="mt-5 grid grid-cols-[auto_1fr_1fr_1fr] gap-2">
+      <div className="mt-5 hidden grid-cols-[auto_1fr_1fr_1fr] gap-2 sm:grid">
         <button
           type="button"
           onClick={back}
@@ -175,16 +197,25 @@ export function SwipeDeck({ cards }: { cards: DeckCard[] }) {
         </button>
       </div>
 
-      <div className="mt-3 min-h-6 text-center text-[14.5px] italic text-ink-3" role="status" aria-live="polite">
-        {notice === "signed-out" ? (
-          <>
-            <Link href="/sign-in?next=/deck" className="text-accent underline">
-              Sign in
-            </Link>{" "}
-            to keep ideas in your library.
-          </>
-        ) : (
-          notice
+      {/* On phones the notice floats over the bottom of the card for a moment. */}
+      <div
+        className="pointer-events-none fixed inset-x-4 bottom-4 z-40 text-center text-[14.5px] italic sm:static sm:mt-3 sm:min-h-6"
+        role="status"
+        aria-live="polite"
+      >
+        {notice && (
+          <span className="pointer-events-auto inline-block border border-ink bg-paper px-4 py-2 text-ink-2 sm:border-0 sm:bg-transparent sm:p-0 sm:text-ink-3">
+            {notice === "signed-out" ? (
+              <>
+                <Link href="/sign-in?next=/deck" className="text-accent underline">
+                  Sign in
+                </Link>{" "}
+                to keep ideas in your library.
+              </>
+            ) : (
+              notice
+            )}
+          </span>
         )}
       </div>
     </div>
@@ -198,6 +229,10 @@ function SwipeCard({ card, onSwipe }: { card: DeckCard; onSwipe: (direction: "le
   const keepOpacity = useTransform(x, [30, SWIPE_DISTANCE], [0, 1]);
   const skipOpacity = useTransform(x, [-SWIPE_DISTANCE, -30], [1, 0]);
 
+  // On touch screens the tap gesture also fires when a swipe ends, which would open the
+  // card instead of moving on. A tap only counts if the finger didn't drag the card.
+  const dragged = useRef(false);
+
   const onDragEnd = (_: unknown, info: PanInfo) => {
     if (info.offset.x > SWIPE_DISTANCE || info.velocity.x > SWIPE_VELOCITY) onSwipe("right");
     else if (info.offset.x < -SWIPE_DISTANCE || info.velocity.x < -SWIPE_VELOCITY) onSwipe("left");
@@ -205,13 +240,17 @@ function SwipeCard({ card, onSwipe }: { card: DeckCard; onSwipe: (direction: "le
 
   return (
     <motion.article
-      className="absolute inset-0 flex cursor-grab touch-pan-y select-none flex-col overflow-hidden border border-ink bg-sheet active:cursor-grabbing"
+      className="absolute inset-0 flex cursor-grab touch-none select-none flex-col overflow-hidden bg-sheet active:cursor-grabbing sm:touch-pan-y sm:border sm:border-ink"
       style={{ x, rotate }}
       drag="x"
       dragSnapToOrigin
       dragElastic={0.9}
+      onPointerDown={() => (dragged.current = false)}
+      onDragStart={() => (dragged.current = true)}
       onDragEnd={onDragEnd}
-      onTap={() => router.push(`/idea/${card.slug}`)}
+      onTap={() => {
+        if (!dragged.current && Math.abs(x.get()) < 4) router.push(`/idea/${card.slug}`);
+      }}
       initial={{ opacity: 0, y: 12, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       variants={EXIT_VARIANTS}
@@ -220,21 +259,21 @@ function SwipeCard({ card, onSwipe }: { card: DeckCard; onSwipe: (direction: "le
       aria-label={`${card.title}. Swipe right to keep, left to skip, tap to read.`}
     >
       <motion.span
-        className="label absolute right-4 top-4 z-10 border-2 border-[var(--st-established)] px-2 py-1 text-[12px] text-[var(--st-established)]"
+        className="label absolute right-4 top-16 z-10 border-2 sm:top-4 border-[var(--st-established)] px-2 py-1 text-[12px] text-[var(--st-established)]"
         style={{ opacity: keepOpacity }}
         aria-hidden
       >
         Keep
       </motion.span>
       <motion.span
-        className="label absolute left-4 top-4 z-10 border-2 border-ink-3 px-2 py-1 text-[12px] text-ink-3"
+        className="label absolute left-4 top-16 z-10 border-2 sm:top-4 border-ink-3 px-2 py-1 text-[12px] text-ink-3"
         style={{ opacity: skipOpacity }}
         aria-hidden
       >
         Skip
       </motion.span>
 
-      <div className="relative flex h-[34%] min-h-[120px] shrink-0 items-center justify-center overflow-hidden border-b border-rule">
+      <div className="relative flex h-[40%] min-h-[120px] shrink-0 items-center justify-center overflow-hidden border-b border-rule sm:h-[34%]">
         {card.image ? (
           // Not draggable, so the browser’s own image drag doesn’t fight the swipe.
           <Image
@@ -250,18 +289,21 @@ function SwipeCard({ card, onSwipe }: { card: DeckCard; onSwipe: (direction: "le
         )}
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-5 sm:p-6">
+      {/* Taller phones show more of the text; small ones clip it cleanly instead of overlapping. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-6 pt-5 sm:p-6">
         <div className="label flex flex-wrap gap-x-3 text-[11px]">
           <span>{catalogueNo(card.no)}</span>
           <span>{card.kind}</span>
           <span>{card.topic}</span>
         </div>
-        <h2 className="mt-2 line-clamp-3 shrink-0 text-[22px] font-medium leading-[1.15] tracking-[-0.015em] sm:text-[26px]">{card.title}</h2>
-        <p className="mt-2 line-clamp-3 shrink-0 text-[15.5px] leading-normal text-ink-2 sm:line-clamp-4 sm:text-[16.5px]">{card.short}</p>
+        <h2 className="mt-2 line-clamp-3 shrink-0 text-[24px] font-medium leading-[1.15] tracking-[-0.015em] sm:text-[26px]">{card.title}</h2>
+        <p className="mt-2.5 line-clamp-3 shrink-0 text-[16px] leading-normal text-ink-2 sm:line-clamp-4 sm:text-[16.5px] [@media(max-width:639.98px)_and_(min-height:640px)_and_(max-height:739.98px)]:line-clamp-5 [@media(max-width:639.98px)_and_(min-height:740px)]:line-clamp-8">
+          {card.short}
+        </p>
         {card.conversationStarter && (
           <div className="mt-auto shrink-0 border-t border-rule pt-3">
             <div className="label text-[10.5px]">Bring it up</div>
-            <p className="mt-1 line-clamp-2 text-[15px] italic leading-snug sm:line-clamp-3 sm:text-[15.5px]">“{card.conversationStarter}”</p>
+            <p className="mt-1 line-clamp-2 text-[15.5px] italic leading-snug [@media(min-height:740px)]:line-clamp-3">{quoted(card.conversationStarter)}</p>
           </div>
         )}
       </div>
