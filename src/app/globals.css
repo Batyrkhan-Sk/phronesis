@@ -92,6 +92,14 @@ body {
   color: var(--ink-3);
 }
 
+/* Horizontal swipe rows keep their scroll but hide the bar. */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* ── Article typography ────────────────────────────────────────── */
 .prose-idea {
   font-size: 19px;

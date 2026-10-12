@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeSwitch } from "./site-header";
 
 export function SiteFooter() {
   return (
@@ -15,6 +16,12 @@ export function SiteFooter() {
           <Link href="/topics" className="label hover:text-ink">
             Topics & modes
           </Link>
+          <Link href="/credits" className="label hover:text-ink">
+            Image credits
+          </Link>
+          <span className="label sm:hidden">
+            Theme: <ThemeSwitch className="text-ink underline" />
+          </span>
         </nav>
       </div>
     </footer>

@@ -1,65 +1,75 @@
 ---
-title: "The devil’s interval that the Church never banned"
-hook: "Everyone “knows” medieval monks banned the tritone as the sound of the devil. The evidence says otherwise."
-short: "The tritone, an interval of three whole tones, is called diabolus in musica, “the devil in music”. The story that the medieval Church outlawed it is a myth. It was avoided for technical reasons in strict harmony, and the sinister nickname seems to be much later than the Middle Ages."
-kind: word
-era: "Medieval to modern"
+title: "The devil’s interval was never banned"
+hook: "The tritone is said to have been outlawed by the medieval Church as ‘the devil in music’. The phrase is real, but the ban looks like a story that grew in the retelling."
+short: "The tritone is an interval of three whole tones, as in the first two notes of “Maria” from West Side Story. It does sound unsettled, and the Latin phrase “diabolus in musica” is a well-known nickname for it. But the nickname is securely attested only from the early 18th century, and there is no good evidence that the Church banned the interval or punished singers for using it."
+kind: phenomenon
+era: "c. 1700s"
 glyph: "♯4"
 topics: [music, history, religion]
-modes: [didnt-know, strange, useful]
-conversationStarter: "The Church banning the devil’s interval is one of those stories everyone repeats and nobody can source."
+modes: [strange, didnt-know, story, useful]
+conversationStarter: "People say the medieval Church banned the ‘devil’s interval’, but the earliest evidence for the nickname is from the 1700s, and there’s no evidence of a ban."
+aliases: [diabolus-in-musica]
 connections:
   - to: mozart-effect
     kind: same-pattern
-    why: "A music story that everyone repeats, and that does not survive a look at the evidence."
+    why: "Another widely repeated claim about music that turns out to be much thinner than its reputation."
+  - to: sator-square
+    kind: related
+    why: "Both are old-looking curiosities tied to stories of the diabolical that are more complicated than they seem."
+  - to: qwerty
+    kind: same-pattern
+    why: "A neat origin tale that gets repeated far more confidently than the evidence supports."
   - to: silbo-gomero
     kind: related
     why: "Another case where pitch and sound carry meaning far beyond the notes themselves."
-  - to: lavers-law
-    kind: contrast
-    why: "Where a mistake spreads, a careful look at primary sources is the cure."
 claims:
-  - text: "The tritone spans three whole tones, such as C up to F sharp, and sounds unstable to many listeners."
+  - text: "The tritone spans three whole tones, six semitones, for example C to F♯."
     status: established
   - text: "The tritone was discouraged in strict church counterpoint and melody for musical reasons."
     status: established
-  - text: "The medieval Church formally banned the tritone."
-    status: myth
-  - text: "The nickname “devil in music” has been applied to the interval from at least the early 18th century."
+  - text: "The phrase “diabolus in musica” is attested in 18th-century writing, including Fux’s Gradus ad Parnassum (1725)."
     status: established
-  - text: "Its sinister reputation owes much to later Romantic and popular culture."
-    status: interpretation
+  - text: "The nickname goes back to the Middle Ages, perhaps to the time of Guido of Arezzo."
+    status: disputed
+  - text: "The medieval Church banned the tritone or punished singers who used it."
+    status: myth
 sources:
-  - title: "What is a tritone and why was it nicknamed the devil’s interval?"
-    author: "Classic FM"
-    url: "https://www.classicfm.com/discover-music/music-theory/what-is-a-tritone/"
+  - title: "Diabolus in Musica: Did the Catholic Church Ban the Tritone for Being “the Devil in Music”?"
+    author: "Skeptical Inquirer"
+    url: "https://skepticalinquirer.org/exclusive/diabolus-in-musica-did-the-catholic-church-ban-the-tritone-for-being-the-devil-in-music/"
     type: article
   - title: "Did the Vatican outlaw the devil in music?"
     author: "Catholic Answers Magazine"
     url: "https://www.catholic.com/magazine/online-edition/did-the-vatican-outlaw-the-devil-in-music"
     type: article
-  - title: "A Brief History of the Devil’s Tritone"
-    author: "Mental Floss"
-    url: "https://www.mentalfloss.com/article/77321/brief-history-devils-tritone"
+  - title: "How was the tritone used? (Medieval Music and Arts Foundation FAQ)"
+    url: "https://www.medieval.org/emfaq/harmony/tritone.html"
+    type: reference
+  - title: "Diabolus in musica"
+    url: "https://en.wikipedia.org/wiki/Diabolus_in_musica"
+    type: reference
+  - title: "What is a tritone and why was it nicknamed the devil’s interval?"
+    author: "Classic FM"
+    url: "https://www.classicfm.com/discover-music/music-theory/what-is-a-tritone/"
     type: article
 ---
 
-Play a note, then the note three whole tones above it: C to F sharp, say. That gap is the **tritone**, and it has a famous nickname, ***diabolus in musica***, “the devil in music”. The popular story: it sounded so unsettling that the medieval Church banned it, and singers risked trouble for using it.
+Play two notes six semitones apart, say C and F♯, and most listeners hear tension. That interval is the **tritone**, and it has one of the best nicknames in music: ***diabolus in musica***, ‘the devil in music’.
 
-## What the evidence says
+## The popular story
 
-Writers who have looked into it find **no evidence of such a ban**. The tritone was indeed discouraged, but as a matter of **musical rules**: in strict church composition it was awkward to sing and clashed with the tidy harmony composers aimed for. That is a style guide, not a prohibition with penalties.
+The tale goes that the medieval Church found the sound so devilish that it banned it, and that singers who used it risked punishment. It is a good story, and it is repeated on many websites.
 
-The nickname itself is also **younger than the legend**. It has been applied to the interval from at least the early 18th century, according to a Catholic Answers article, which is long after the Middle Ages. The closest thing to a real papal complaint often mentioned, from 1323, is about complicated multi-voice music in general, not this interval.
+## What the evidence shows
 
-## Why the story sticks
+The Latin phrase is real, but its paper trail starts later than the legend suggests. It appears in writers of the **early 1700s**, including **Johann Joseph Fux** in his counterpoint manual *Gradus ad Parnassum* (1725). Fux used the old rule of thumb **mi contra fa**: when a ‘mi’ from one **hexachord** (the six-note building blocks of medieval singing) meets a ‘fa’ from the next, the result is a clash to avoid. That rule covers more than the tritone, and it is a teaching tip about writing smooth melodies, not a decree.
 
-The tritone really does sound restless. It wants to resolve, and in a major scale it sits between the fourth and seventh notes, ready to pull toward home. Later composers, from the Romantics to heavy metal, used it deliberately for tension and menace, and each new use made the myth feel more plausible.
+Some reference works trace the nickname back to the Middle Ages, perhaps to the era of **Guido of Arezzo**. Careful researchers say no medieval citation has been found. As for a ban, there is **no good evidence** of one. Composers avoided the tritone because it was awkward to sing and clashed with the harmonic rules of the day: a style guide, not a prohibition with penalties.
 
-## Not so devilish
+## Why it still feels devilish
 
-The same sound opens the song “Maria” in *West Side Story*, which is a love song. The interval is just a tool; it is the context that makes it spooky or tender.
+The tritone really does sound restless: it wants to resolve. Later composers, from the Romantics to heavy metal, used it deliberately for tension and menace, and each new use made the myth feel more plausible. Saint-Saëns’s *Danse macabre* even tunes the solo violin’s top string down so the open strings sound it.
 
-## A better thing to say
+But the same interval opens “Maria” in *West Side Story*, which is a love song. Context decides whether it sounds eerie, restless or bright.
 
-If someone tells you the Church banned the tritone, you can gently add: it was discouraged for sound musical reasons, and the devilish name is a later invention. It is a small example of how a good story can outrun its sources.
+**A kind thing to say at dinner:** the sound is real, the legend is late, and the truth is that a rule of thumb for choirboys became a ghost story.

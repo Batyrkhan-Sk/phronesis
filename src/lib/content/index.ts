@@ -19,9 +19,25 @@ export type Idea = Omit<IdeaFrontmatter, "connections"> & {
   deepDiveHtml: string | null;
   readingMinutes: number;
   connections: Connection[];
+  /** A freely licensed image from Wikimedia Commons, if one was found (content/images.json). */
+  image?: IdeaImage;
 };
 
-export type IdeaSummary = Pick<Idea, "slug" | "no" | "title" | "hook" | "kind" | "era" | "glyph" | "topics" | "modes" | "readingMinutes">;
+export type IdeaSummary = Pick<
+  Idea,
+  "slug" | "no" | "title" | "hook" | "kind" | "era" | "glyph" | "topics" | "modes" | "readingMinutes" | "image"
+>;
+
+export type IdeaImage = {
+  src: string;
+  width: number;
+  height: number;
+  alt: string;
+  credit: string;
+  license: string;
+  licenseUrl?: string;
+  sourceUrl: string;
+};
 
 export type Trail = TrailFrontmatter & { slug: string; introHtml: string };
 
@@ -55,13 +71,20 @@ function fail(file: string, message: string): never {
   throw new Error(`[content] ${path.relative(process.cwd(), file)}: ${message}`);
 }
 
-type Store = { ideas: Map<string, Idea>; trails: Map<string, Trail> };
+/** content/images.json maps slugs to images (or null when no free image was found). */
+function readImages(): Record<string, IdeaImage | null> {
+  const file = path.join(CONTENT_DIR, "images.json");
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+}
+
+type Store = { ideas: Map<string, Idea>; aliases: Map<string, string>; trails: Map<string, Trail> };
 let store: Store | null = null;
 
 function load(): Store {
   if (store && process.env.NODE_ENV === "production") return store;
 
   const ideas = new Map<string, Idea>();
+  const images = readImages();
   const outgoing = new Map<string, IdeaFrontmatter["connections"]>();
 
   for (const { slug, file, raw } of readDir("ideas")) {
@@ -83,6 +106,8 @@ function load(): Store {
       modes: [...modes],
       bodyHtml: render(body),
       deepDiveHtml: deep?.trim() ? render(deep) : null,
+      // Only images that have been downloaded into public/ (see scripts/images.mjs).
+      image: images[slug]?.src?.startsWith("/") ? images[slug]! : undefined,
       readingMinutes: Math.max(1, Math.ceil(countWords(fm.short + body + (deep ?? "")) / 220)),
       connections: [],
     });
@@ -90,6 +115,16 @@ function load(): Store {
   }
 
   [...ideas.keys()].sort().forEach((slug, i) => (ideas.get(slug)!.no = i + 1));
+
+  const aliases = new Map<string, string>();
+  for (const idea of ideas.values()) {
+    for (const alias of idea.aliases) {
+      const file = path.join(CONTENT_DIR, "ideas", `${idea.slug}.md`);
+      if (ideas.has(alias)) fail(file, `alias "${alias}" is also an existing idea`);
+      if (aliases.has(alias)) fail(file, `alias "${alias}" is already used by "${aliases.get(alias)}"`);
+      aliases.set(alias, idea.slug);
+    }
+  }
 
   // Connections are written once and shown from both ends.
   for (const [from, conns] of outgoing) {
@@ -118,7 +153,7 @@ function load(): Store {
     trails.set(slug, { ...parsed.data, slug, introHtml: render(content) });
   }
 
-  store = { ideas, trails };
+  store = { ideas, aliases, trails };
   return store;
 }
 
@@ -135,19 +170,21 @@ export const summarize = (i: Idea): IdeaSummary => ({
   topics: i.topics,
   modes: i.modes,
   readingMinutes: i.readingMinutes,
+  image: i.image,
 });
 
 export function getAllIdeas(): Idea[] {
   return [...load().ideas.values()].sort((a, b) => a.title.localeCompare(b.title));
 }
 
+/** Looks up an idea by its slug or by a former slug listed in `aliases`. */
 export function getIdea(slug: string): Idea | undefined {
-  return load().ideas.get(slug);
+  const { ideas, aliases } = load();
+  return ideas.get(slug) ?? ideas.get(aliases.get(slug) ?? "");
 }
 
 export function getIdeasBySlugs(slugs: string[]): Idea[] {
-  const { ideas } = load();
-  return slugs.map((s) => ideas.get(s)).filter((i): i is Idea => Boolean(i));
+  return slugs.map(getIdea).filter((i): i is Idea => Boolean(i));
 }
 
 export const getIdeasByTopic = (topic: TopicSlug) => getAllIdeas().filter((i) => i.topics.includes(topic));

@@ -69,6 +69,16 @@ export async function toggleSave(slug: string): Promise<boolean> {
   return !existing;
 }
 
+/** Adds an idea to the library without ever removing it (used by the swipe deck). */
+export async function keepIdea(slug: string): Promise<"kept" | "signed-out"> {
+  const session = await getSession();
+  if (!session) return "signed-out";
+  assertIdea(slug);
+  await db.insert(save).values({ userId: session.user.id, ideaSlug: slug }).onConflictDoNothing();
+  revalidatePath("/library");
+  return "kept";
+}
+
 export async function recordView(slug: string) {
   const session = await getSession();
   if (!session || !getIdea(slug)) return;

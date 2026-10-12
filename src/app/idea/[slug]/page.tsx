@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { IdeaCard, KIND_LABEL } from "@/components/idea/idea-card";
 import { DepthReader } from "@/components/idea/depth-reader";
+import { IdeaFigure } from "@/components/idea/idea-image";
 import { CopyButton, SaveControls } from "@/components/idea/save-controls";
 import { Claims, Connections, SectionHeading, Sources, TrailNav } from "@/components/idea/idea-sections";
 import { SectionTitle } from "@/components/page-header";
+import { SwipeRow } from "@/components/swipe-row";
 import { getAllIdeas, getIdea, getRecommendations, getTrailsForIdea, summarize } from "@/lib/content";
 import { topicBySlug } from "@/lib/content/taxonomy";
 import { catalogueNo } from "@/lib/format";
@@ -16,16 +18,24 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: PageProps<"/idea/[slug]">): Promise<Metadata> {
   const idea = getIdea((await params).slug);
-  return idea ? { title: idea.title, description: idea.hook } : {};
+  if (!idea) return {};
+  return {
+    title: idea.title,
+    description: idea.hook,
+    // Shared links show the idea's image when it has one.
+    openGraph: idea.image ? { images: [{ url: idea.image.src, width: idea.image.width, height: idea.image.height }] } : undefined,
+  };
 }
 
 export default async function IdeaPage({ params }: PageProps<"/idea/[slug]">) {
   const { slug } = await params;
   const idea = getIdea(slug);
   if (!idea) notFound();
+  // A former slug (from a merged duplicate) points to the idea under its current address.
+  if (idea.slug !== slug) permanentRedirect(`/idea/${idea.slug}`);
 
-  const trails = getTrailsForIdea(slug);
-  const recs = getRecommendations(slug, 3);
+  const trails = getTrailsForIdea(idea.slug);
+  const recs = getRecommendations(idea.slug, 6);
 
   return (
     <article className="pt-12 sm:pt-16">
@@ -54,6 +64,12 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[slug]">) {
             <SaveControls slug={idea.slug} title={idea.title} />
             <span className="label text-[11px]">{idea.readingMinutes} min read</span>
           </div>
+
+          {idea.image && (
+            <div className="mt-10 max-w-[760px]">
+              <IdeaFigure image={idea.image} title={idea.title} priority />
+            </div>
+          )}
 
           <div className="mt-12 max-w-[700px]">
             <DepthReader short={idea.short} bodyHtml={idea.bodyHtml} deepDiveHtml={idea.deepDiveHtml} />
@@ -99,11 +115,11 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[slug]">) {
       {recs.length > 0 && (
         <>
           <SectionTitle title="You might also find interesting" />
-          <div className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          <SwipeRow>
             {recs.map((r) => (
               <IdeaCard key={r.slug} idea={summarize(r)} />
             ))}
-          </div>
+          </SwipeRow>
         </>
       )}
     </article>

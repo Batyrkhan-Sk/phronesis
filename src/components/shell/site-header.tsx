@@ -10,6 +10,7 @@ import { UserMenu } from "./user-menu";
 
 const NAV = [
   { href: "/", label: "Today" },
+  { href: "/deck", label: "Deck" },
   { href: "/explore", label: "Explore" },
   { href: "/trails", label: "Trails" },
   { href: "/topics", label: "Topics" },
@@ -26,7 +27,7 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-function ThemeSwitch() {
+export function ThemeSwitch({ className = "" }: { className?: string }) {
   const { theme, setTheme } = useTheme();
   const mounted = useMounted();
   const current = mounted ? (theme ?? "system") : "system";
@@ -37,7 +38,7 @@ function ThemeSwitch() {
       type="button"
       onClick={() => setTheme(next)}
       aria-label={`Theme: ${label}. Switch to ${next}.`}
-      className="label min-h-11 px-1 hover:text-ink"
+      className={`label min-h-11 px-1 hover:text-ink ${className}`}
     >
       {label}
     </button>
@@ -82,7 +83,7 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={openSearch}
@@ -98,7 +99,8 @@ export function SiteHeader() {
           <button type="button" onClick={surprise} className="label hidden min-h-11 hover:text-ink sm:inline" title="Open a random idea">
             Surprise me
           </button>
-          <ThemeSwitch />
+          {/* On phones the theme switch lives in the footer, to keep the header to one line. */}
+          <ThemeSwitch className="hidden sm:inline-flex sm:items-center" />
           {isPending ? (
             <span className="size-11" aria-hidden />
           ) : session ? (
@@ -106,7 +108,7 @@ export function SiteHeader() {
           ) : (
             <Link
               href={`/sign-in?next=${encodeURIComponent(pathname)}`}
-              className="label inline-flex min-h-11 items-center border border-ink px-4 text-ink hover:bg-ink hover:text-paper"
+              className="label inline-flex min-h-11 items-center border border-ink px-3 text-ink hover:bg-ink hover:text-paper sm:px-4"
             >
               Sign in
             </Link>

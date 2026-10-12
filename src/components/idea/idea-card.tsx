@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { IdeaSummary } from "@/lib/content";
 import { topicBySlug } from "@/lib/content/taxonomy";
 import { catalogueNo } from "@/lib/format";
+import { IdeaThumb } from "./idea-image";
 
 export const KIND_LABEL: Record<IdeaSummary["kind"], string> = {
   fact: "Fact",
@@ -58,6 +59,7 @@ export function IdeaMeta({ idea, className = "" }: { idea: IdeaSummary; classNam
 export function IdeaCard({ idea }: { idea: IdeaSummary }) {
   return (
     <Link href={`/idea/${idea.slug}`} className="group flex flex-col border-t border-ink pt-4">
+      {idea.image && <IdeaThumb image={idea.image} title={idea.title} className="mb-4 aspect-[3/2]" />}
       <IdeaMeta idea={idea} />
       <h3 className="mt-2 text-[23px] font-medium leading-[1.2] tracking-[-0.01em] text-ink transition-colors group-hover:text-accent">
         {idea.title}

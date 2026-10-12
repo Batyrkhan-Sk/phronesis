@@ -47,6 +47,8 @@ export const ideaFrontmatter = z.object({
     )
     .min(1, "every idea needs at least one source"),
   published: z.coerce.date().optional(),
+  /** Former slugs of this idea (e.g. after merging duplicates); old links and saves resolve to it. */
+  aliases: z.array(slug).default([]),
 });
 
 export const trailFrontmatter = z.object({

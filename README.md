@@ -89,6 +89,22 @@ Connections only need to be written in one file; they appear on both ideas. The 
 
 Topics and modes are defined in `src/lib/content/taxonomy.ts`.
 
+### Merging duplicates
+
+If two ideas cover the same thing, keep the one people may already have saved, fold the best of the other into it, delete the other file and list its slug under `aliases:`. Old links and saved ideas then redirect to the remaining idea:
+
+```yaml
+aliases: [diabolus-in-musica]
+```
+
+## Images
+
+`pnpm images` finds a freely licensed image for each idea: it takes the lead image of the Wikipedia article the idea cites, keeps it only if Wikimedia Commons lists a free licence (public domain, CC0, CC BY, CC BY-SA), and records the author and licence in `content/images.json`. It then downloads the image once, resizes it to at most 1200px wide as WebP and saves it in `public/images/ideas/`, so the site never hotlinks Wikimedia. Run it after adding ideas (`pnpm images <slug>` for specific ones, `--refresh` to re-check all). Images appear on idea pages (with credit), cards, the deck and the home page, and every one is listed on `/credits`.
+
+## The deck
+
+`/deck` shows one idea at a time, built for phones: swipe right to keep an idea in your library, left to skip, tap to read. Buttons and the arrow keys do the same.
+
 ## Discussion leads
 
 `pnpm leads` reads recent public Mastodon posts for the hashtags of the least-covered topics and writes `leads/leads.md` (gitignored). The file starts with a **Terms spotted** list (named concepts, quoted words and phrases, related hashtags), followed by the most-engaged posts. Leads are inspiration, not evidence: every fact must still be verified before it becomes an idea.

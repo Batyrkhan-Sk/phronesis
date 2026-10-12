@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { IdeaCard, IdeaPlate, KIND_LABEL } from "@/components/idea/idea-card";
+import { IdeaThumb } from "@/components/idea/idea-image";
 import { SectionTitle } from "@/components/page-header";
+import { SwipeRow } from "@/components/swipe-row";
 import { TrailCard } from "@/components/trail-card";
 import { getAllIdeas, getAllTrails, getIdeaOfTheDay, getIdeasByMode, summarize } from "@/lib/content";
 import { MODES, TOPICS, topicBySlug } from "@/lib/content/taxonomy";
@@ -16,7 +18,7 @@ export default function HomePage() {
   const all = getAllIdeas();
   const trails = getAllTrails();
   const starters = getIdeasByMode("conversation").filter((i) => i.slug !== today.slug).slice(0, 3);
-  const strange = getIdeasByMode("strange").filter((i) => i.slug !== today.slug).slice(0, 3);
+  const strange = getIdeasByMode("strange").filter((i) => i.slug !== today.slug).slice(0, 6);
 
   return (
     <div>
@@ -43,7 +45,33 @@ export default function HomePage() {
               Read it · {today.readingMinutes} min
             </span>
           </div>
-          <IdeaPlate idea={today} size="lg" className="aspect-square w-full max-w-[320px] flex-[1_1_240px]" />
+          {today.image ? (
+            <IdeaThumb
+              image={today.image}
+              title={today.title}
+              className="order-first aspect-[4/3] w-full flex-[1_1_280px] sm:order-none sm:max-w-[380px]"
+              sizes="(max-width: 640px) 100vw, 380px"
+            />
+          ) : (
+            <IdeaPlate idea={today} size="lg" className="hidden aspect-square w-full max-w-[320px] flex-[1_1_240px] sm:flex" />
+          )}
+        </Link>
+
+        {/* The deck */}
+        <Link
+          href="/deck"
+          className="group mt-12 flex items-center gap-5 border border-ink bg-sheet p-5 transition-colors hover:bg-wash"
+        >
+          <span className="relative h-16 w-12 shrink-0" aria-hidden>
+            <span className="absolute inset-0 translate-x-2 -rotate-6 border border-rule-strong bg-paper" />
+            <span className="absolute inset-0 border border-ink bg-sheet" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="label block text-[11px]">The deck</span>
+            <span className="block text-[21px] leading-snug transition-colors group-hover:text-accent">Swipe through {all.length} ideas</span>
+            <span className="block text-[15px] italic text-ink-3">Right to keep, left to skip. Made for a few spare minutes.</span>
+          </span>
+          <span className="label text-[12px]" aria-hidden>→</span>
         </Link>
       </section>
 
@@ -73,11 +101,11 @@ export default function HomePage() {
           </Link>
         }
       />
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <SwipeRow columns="xl:grid-cols-3">
         {trails.slice(0, 3).map((t) => (
           <TrailCard key={t.slug} trail={t} />
         ))}
-      </div>
+      </SwipeRow>
 
       {/* Strange but true */}
       <SectionTitle
@@ -88,22 +116,22 @@ export default function HomePage() {
           </Link>
         }
       />
-      <div className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+      <SwipeRow>
         {strange.map((i) => (
           <IdeaCard key={i.slug} idea={summarize(i)} />
         ))}
-      </div>
+      </SwipeRow>
 
       {/* Conversation starters */}
       <SectionTitle title="Bring these up tonight" />
-      <div className="grid gap-x-10 gap-y-8 md:grid-cols-3">
+      <SwipeRow>
         {starters.map((i) => (
           <Link key={i.slug} href={`/idea/${i.slug}`} className="group block">
             <blockquote className="text-[22px] italic leading-[1.4] transition-colors group-hover:text-accent">“{i.conversationStarter}”</blockquote>
             <div className="label mt-3 text-[11px]">From {catalogueNo(i.no)} · {i.title}</div>
           </Link>
         ))}
-      </div>
+      </SwipeRow>
 
       {/* Topics */}
       <SectionTitle
