@@ -21,12 +21,30 @@ export type Idea = Omit<IdeaFrontmatter, "connections"> & {
   connections: Connection[];
   /** A freely licensed image from Wikimedia Commons, if one was found (content/images.json). */
   image?: IdeaImage;
+  /** A short, freely licensed video or animation that shows the idea (content/media.json). */
+  media?: IdeaMedia;
 };
 
 export type IdeaSummary = Pick<
   Idea,
-  "slug" | "no" | "title" | "hook" | "kind" | "era" | "glyph" | "topics" | "modes" | "readingMinutes" | "image"
+  "slug" | "no" | "title" | "hook" | "kind" | "era" | "glyph" | "topics" | "modes" | "readingMinutes" | "image" | "media"
 >;
+
+export type IdeaMedia = {
+  /** A film with sound and controls, or a silent looping animation (converted from a GIF). */
+  kind: "video" | "animation";
+  src: string;
+  poster: string;
+  width: number;
+  height: number;
+  duration: number;
+  /** Says plainly what the clip shows, e.g. that it is a reconstruction. */
+  caption: string;
+  credit: string;
+  license: string;
+  licenseUrl?: string;
+  sourceUrl: string;
+};
 
 export type IdeaImage = {
   src: string;
@@ -77,6 +95,12 @@ function readImages(): Record<string, IdeaImage | null> {
   return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
 }
 
+/** content/media.json maps slugs to a hand-picked video or animation (see scripts/media.mjs). */
+function readMedia(): Record<string, IdeaMedia> {
+  const file = path.join(CONTENT_DIR, "media.json");
+  return fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};
+}
+
 type Store = { ideas: Map<string, Idea>; aliases: Map<string, string>; trails: Map<string, Trail> };
 let store: Store | null = null;
 
@@ -85,6 +109,7 @@ function load(): Store {
 
   const ideas = new Map<string, Idea>();
   const images = readImages();
+  const media = readMedia();
   const outgoing = new Map<string, IdeaFrontmatter["connections"]>();
 
   for (const { slug, file, raw } of readDir("ideas")) {
@@ -108,6 +133,7 @@ function load(): Store {
       deepDiveHtml: deep?.trim() ? render(deep) : null,
       // Only images that have been downloaded into public/ (see scripts/images.mjs).
       image: images[slug]?.src?.startsWith("/") ? images[slug]! : undefined,
+      media: media[slug]?.src?.startsWith("/") ? media[slug] : undefined,
       readingMinutes: Math.max(1, Math.ceil(countWords(fm.short + body + (deep ?? "")) / 220)),
       connections: [],
     });
@@ -171,6 +197,7 @@ export const summarize = (i: Idea): IdeaSummary => ({
   modes: i.modes,
   readingMinutes: i.readingMinutes,
   image: i.image,
+  media: i.media,
 });
 
 export function getAllIdeas(): Idea[] {

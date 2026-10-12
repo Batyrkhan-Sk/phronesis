@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import { IdeaCard, KIND_LABEL } from "@/components/idea/idea-card";
 import { DepthReader } from "@/components/idea/depth-reader";
+import { IdeaClip } from "@/components/idea/idea-clip";
 import { IdeaFigure } from "@/components/idea/idea-image";
 import { CopyButton, SaveControls } from "@/components/idea/save-controls";
 import { Claims, Connections, SectionHeading, Sources, TrailNav } from "@/components/idea/idea-sections";
@@ -10,7 +11,7 @@ import { SectionTitle } from "@/components/page-header";
 import { SwipeRow } from "@/components/swipe-row";
 import { getAllIdeas, getIdea, getRecommendations, getTrailsForIdea, summarize } from "@/lib/content";
 import { topicBySlug } from "@/lib/content/taxonomy";
-import { catalogueNo } from "@/lib/format";
+import { catalogueNo, quoted } from "@/lib/format";
 
 export function generateStaticParams() {
   return getAllIdeas().map((i) => ({ slug: i.slug }));
@@ -75,9 +76,18 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[slug]">) {
             <DepthReader short={idea.short} bodyHtml={idea.bodyHtml} deepDiveHtml={idea.deepDiveHtml} />
           </div>
 
+          {idea.media && (
+            <section className="mt-14 max-w-[760px]">
+              <SectionHeading>{idea.media.kind === "video" ? "Watch" : "See it move"}</SectionHeading>
+              <div className="mt-4">
+                <IdeaClip media={idea.media} title={idea.title} />
+              </div>
+            </section>
+          )}
+
           {idea.quote && (
             <figure className="mt-14 max-w-[700px] border-y border-rule py-7">
-              <blockquote className="text-[25px] italic leading-[1.4]">“{idea.quote.text}”</blockquote>
+              <blockquote className="text-[25px] italic leading-[1.4]">{quoted(idea.quote.text)}</blockquote>
               <figcaption className="label mt-3">{idea.quote.by}</figcaption>
             </figure>
           )}
@@ -88,7 +98,7 @@ export default async function IdeaPage({ params }: PageProps<"/idea/[slug]">) {
                 <SectionHeading>Bring it up</SectionHeading>
                 <CopyButton text={idea.conversationStarter} />
               </div>
-              <blockquote className="mt-2 text-[25px] italic leading-[1.4]">“{idea.conversationStarter}”</blockquote>
+              <blockquote className="mt-2 text-[25px] italic leading-[1.4]">{quoted(idea.conversationStarter)}</blockquote>
             </figure>
           )}
 

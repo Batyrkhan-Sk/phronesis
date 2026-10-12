@@ -67,6 +67,7 @@ export function IdeaCard({ idea }: { idea: IdeaSummary }) {
       <p className="mt-2 line-clamp-3 text-[16.5px] leading-normal text-ink-2">{idea.hook}</p>
       <div className="label mt-auto flex gap-3 pt-4 text-[11px]">
         <span>{idea.readingMinutes} min</span>
+        {idea.media && <span className="shrink-0">▶ {idea.media.kind === "video" ? "Video" : "Animation"}</span>}
         {idea.era && <span className="truncate">{idea.era}</span>}
       </div>
     </Link>

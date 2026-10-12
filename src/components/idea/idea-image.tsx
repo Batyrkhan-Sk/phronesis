@@ -22,22 +22,48 @@ export function IdeaFigure({ image, title, priority = false }: { image: IdeaImag
         priority={priority}
         className={`mx-auto h-auto max-h-[min(68svh,560px)] w-full object-contain ${TONE}`}
       />
-      <figcaption className="label flex flex-wrap gap-x-2 gap-y-1 border-t border-rule px-3 py-2 text-[10.5px] normal-case tracking-[0.04em]">
-        <span>Image: {image.credit}</span>
-        <span aria-hidden>·</span>
-        {image.licenseUrl ? (
-          <a href={image.licenseUrl} target="_blank" rel="noopener noreferrer license" className="underline hover:text-ink">
-            {image.license}
-          </a>
-        ) : (
-          <span>{image.license}</span>
-        )}
-        <span aria-hidden>·</span>
-        <a href={image.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
-          Wikimedia Commons
-        </a>
+      <figcaption className="border-t border-rule px-3 py-2">
+        <CommonsCredit label="Image" {...image} />
       </figcaption>
     </figure>
+  );
+}
+
+/** “Image: author · licence · Wikimedia Commons”, as every reused file must credit. */
+export function CommonsCredit({
+  label,
+  credit,
+  license,
+  licenseUrl,
+  sourceUrl,
+  children,
+}: {
+  label: string;
+  credit: string;
+  license: string;
+  licenseUrl?: string;
+  sourceUrl: string;
+  children?: React.ReactNode;
+}) {
+  return (
+    <div className="label flex flex-wrap items-baseline gap-x-2 gap-y-1 text-[10.5px] normal-case tracking-[0.04em]">
+      <span>
+        {label}: {credit}
+      </span>
+      <span aria-hidden>·</span>
+      {licenseUrl ? (
+        <a href={licenseUrl} target="_blank" rel="noopener noreferrer license" className="underline hover:text-ink">
+          {license}
+        </a>
+      ) : (
+        <span>{license}</span>
+      )}
+      <span aria-hidden>·</span>
+      <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+        Wikimedia Commons
+      </a>
+      {children}
+    </div>
   );
 }
 

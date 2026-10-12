@@ -99,7 +99,19 @@ aliases: [diabolus-in-musica]
 
 ## Images
 
-`pnpm images` finds a freely licensed image for each idea: it takes the lead image of the Wikipedia article the idea cites, keeps it only if Wikimedia Commons lists a free licence (public domain, CC0, CC BY, CC BY-SA), and records the author and licence in `content/images.json`. It then downloads the image once, resizes it to at most 1200px wide as WebP and saves it in `public/images/ideas/`, so the site never hotlinks Wikimedia. Run it after adding ideas (`pnpm images <slug>` for specific ones, `--refresh` to re-check all). Images appear on idea pages (with credit), cards, the deck and the home page, and every one is listed on `/credits`.
+`pnpm images` finds a freely licensed image for each idea: it takes the lead image of the Wikipedia article the idea cites, keeps it only if Wikimedia Commons lists a free licence (public domain, CC0, CC BY, CC BY-SA), and records the author and licence in `content/images.json`. It then downloads the image once, resizes it to at most 1200px wide as WebP and saves it in `public/images/ideas/`, so the site never hotlinks Wikimedia. Run it after adding ideas (`pnpm images <slug>` for specific ones, `--refresh` to re-check all). Images appear on idea pages (with credit), cards, the deck and the home page, and every one is credited on `/credits`.
+
+## Video and animation
+
+Some ideas are easier to see than to read: an experiment, a map changing over centuries, a character written stroke by stroke. `pnpm media` adds a short, freely licensed clip from Wikimedia Commons to such an idea. Clips are picked by hand, because the article an idea cites often holds clips that only show the subject:
+
+```bash
+pnpm media --scan kuleshov-effect                          # list videos and GIFs in the articles the idea cites
+pnpm media kuleshov-effect "File:KuleshovEffectExample.ogv" # check the licence, download, convert
+pnpm media kuleshov-effect --remove
+```
+
+Only add a clip that explains the idea, and rewrite its `caption` in `content/media.json` so it says exactly what is on screen (for example “a modern reconstruction, not the original footage”). Each clip is converted once to H.264 MP4 (plays on every phone) with a poster frame and stored in `public/media/ideas/`. GIFs become silent looping MP4s, much smaller than the GIF. The ffmpeg binary is fetched the first time the script needs it, so installs and deploys don’t download it. Clips appear on the idea page, are marked “▶ Video” or “▶ Animation” on cards, and are credited on `/credits`.
 
 ## The deck
 

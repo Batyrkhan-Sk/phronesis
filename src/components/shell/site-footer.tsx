@@ -17,7 +17,7 @@ export function SiteFooter() {
             Topics & modes
           </Link>
           <Link href="/credits" className="label hover:text-ink">
-            Image credits
+            Credits
           </Link>
           <span className="label sm:hidden">
             Theme: <ThemeSwitch className="text-ink underline" />

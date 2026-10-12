@@ -1,4 +1,6 @@
 allowBuilds:
   esbuild: true
+  # Not on install (deploys don't need it); scripts/media.mjs fetches the binary on first use.
+  ffmpeg-static: false
   sharp: false
   unrs-resolver: false
